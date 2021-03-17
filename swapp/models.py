@@ -8,7 +8,11 @@ class User(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=15)
     password = models.CharField(max_length=30)
-
+    email = models.CharField(max_length=30, default='')
+    phone_number = models.CharField(max_length=30, default='')
+    city = models.CharField(max_length=15, default='')
+    country = models.CharField(max_length=15, default='')
+    address = models.CharField(max_length=30, default='')
 
 class Item(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
