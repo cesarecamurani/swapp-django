@@ -60,6 +60,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
+ATOMIC_REQUESTS = True
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases

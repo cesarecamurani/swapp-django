@@ -1,0 +1,110 @@
+body {
+  background-color: #e5e9f0;
+  font-family: 'Voltaire';
+  color: #4c566a;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0;
+  text-align: left;
+}
+
+.navbar-custom {
+  background-color: #4c566a;
+  color: #e5e9f0;
+  padding: 15px;
+}
+
+.navbar-light .navbar-brand {
+  color: #e5e9f0;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: #e5e9f0;
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+  color: #a3be8c;
+}
+
+.navbar-light .navbar-brand:focus, .navbar-light .navbar-brand:hover {
+  color: #a3be8c;
+}
+
+.navbar-brand-custom {
+  font-size: xx-large;
+}
+
+main .form-control
+{
+  /* Center form controls */
+  display: inline-block;
+
+  /* Override Bootstrap's 100% width for form controls */
+  width: auto;
+}
+
+main
+{
+  /* Scroll horizontally as needed */
+  overflow-x: auto;
+
+  /* Center contents */
+  text-align: center;
+}
+
+main img
+{
+  /* Constrain images on small screens */
+  max-width: 100%;
+}
+
+.btn-primary {
+  color: #e5e9f0;
+  background-color: #5e81ac;
+  border-color: #5e81ac;
+}
+
+.btn-primary:hover {
+  color: #4c566a;
+  background-color: #a3be8c;
+  border-color: #a3be8c;
+}
+
+.btn-primary:focus {
+  color: #e5e9f0;
+  background-color: #5e81ac;
+  border-color: #5e81ac;
+}
+
+a {
+  color: #5e81ac;
+}
+
+a:hover {
+  color: #5e81ac;
+  text-decoration: underline;
+}
+
+.table {
+  color: #4c566a;
+  background-color: #d8dee9;
+}
+
+.table tbody tr:nth-of-type(odd) {
+  background-color: #81a1c1;
+  color: #e5e9f0;
+}
+
+.alert-primary {
+  color: #4c566a;
+  background-color: #a3be8c;
+}
+
+.quote_response {
+  font-size: 1.5rem;
+}
+
+.p-5 {
+  padding: 1rem !important;
+}
