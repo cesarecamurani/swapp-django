@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.utils.translation import gettext_lazy as _
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -15,6 +14,7 @@ class Profile(models.Model):
     city = models.CharField(max_length=15, default='')
     country = models.CharField(max_length=15, default='')
     address = models.CharField(max_length=30, default='')
+    objects = models.Manager()
 
 
 @receiver(post_save, sender=User)
