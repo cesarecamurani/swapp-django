@@ -14,7 +14,6 @@ class Profile(models.Model):
     city = models.CharField(max_length=15, default='')
     country = models.CharField(max_length=15, default='')
     address = models.CharField(max_length=30, default='')
-    objects = models.Manager()
 
 
 @receiver(post_save, sender=User)

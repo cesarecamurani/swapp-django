@@ -1,6 +1,6 @@
 body {
-  background-color: #e5e9f0;
-  font-family: 'Voltaire';
+  background-color: #eceff4;
+  font-family: 'Jura', 'monospace';
   color: #4c566a;
   font-size: 1rem;
   font-weight: 400;
@@ -12,6 +12,7 @@ body {
 .navbar-custom {
   background-color: #4c566a;
   color: #e5e9f0;
+  font-size: 1.3rem;
   padding: 15px;
 }
 
@@ -32,7 +33,7 @@ body {
 }
 
 .navbar-brand-custom {
-  font-size: xx-large;
+  font-size: 2.5rem;
 }
 
 main .form-control
@@ -101,10 +102,17 @@ a:hover {
   background-color: #a3be8c;
 }
 
-.quote_response {
-  font-size: 1.5rem;
-}
-
 .p-5 {
   padding: 1rem !important;
+  align-content: center;
+}
+
+input:hover {
+  background-color: #a3be8c;
+}
+
+.forms-container {
+  background-color: #d8dee9;
+  padding: 25px;
+  border-radius: 0.5rem;
 }

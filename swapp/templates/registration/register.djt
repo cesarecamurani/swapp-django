@@ -1,0 +1,23 @@
+{% extends 'layout.djt' %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block body %}
+    <div class='forms-container'>
+        <h2>Register</h2>
+        <hr>
+        <form method='post'>
+            {% csrf_token %}
+            {% for field in user_form %}
+                <div class='form-group'> {{ field }} </div>
+            {% endfor %}
+            {% for field in profile_form %}
+                <div class='form-group'> {{ field }} </div>
+            {% endfor %}
+            <br>
+            <button class='btn btn-primary' type='submit'>Register</button>
+        </form>
+    </div>
+{% endblock %}
