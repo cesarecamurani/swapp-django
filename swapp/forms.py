@@ -9,12 +9,11 @@ class UserCreateForm(ModelForm):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
+        fields = ['username', 'email', 'password', 'password_confirmation']
 
     def __init__(self, *args, **kwargs):
         super(UserCreateForm, self).__init__(*args, **kwargs)
 
-        super().__init__()
         for field_name, field in self.fields.items():
             self.fields[field_name].widget.attrs = {
                 'autocomplete': 'off', 'class': 'form-control', 'placeholder': field.label
@@ -41,12 +40,11 @@ class UserCreateForm(ModelForm):
 class ProfileCreateForm(ModelForm):
     class Meta:
         model = Profile
-        fields = ('phone_number', 'city', 'country', 'address')
+        fields = ['phone_number', 'city', 'country', 'address']
 
     def __init__(self, *args, **kwargs):
         super(ProfileCreateForm, self).__init__(*args, **kwargs)
 
-        super().__init__()
         for field_name, field in self.fields.items():
             self.fields[field_name].widget.attrs = {
                 'autocomplete': 'off', 'class': 'form-control', 'placeholder': field.label

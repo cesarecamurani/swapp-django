@@ -1,0 +1,27 @@
+{% extends 'layout.djt' %}
+
+{% block title %}
+   - Login
+{% endblock %}
+
+{% block body %}
+    {% if messages %}
+    <ul class="messages alert-primary">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <div class='forms-container'>
+        <h2>Login</h2>
+        <hr>
+        <form method='post'>
+            {% csrf_token %}
+            {% for field in form %}
+                <div class='form-group'> {{ field }} </div>
+            {% endfor %}
+            <br>
+            <button class='btn btn-primary' type='submit'>Login</button>
+        </form>
+    </div>
+{% endblock %}

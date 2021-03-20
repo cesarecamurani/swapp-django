@@ -40,11 +40,14 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'project.urls'
 
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'swapp', 'templates')
+            os.path.join(BASE_DIR, 'swapp/templates')
         ],
         'APP_DIRS': True,
         'OPTIONS': {
