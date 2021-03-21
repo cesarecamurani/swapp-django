@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 @login_required
 def users_request(request):
     if request.method == 'GET':
-        all_users = User.objects.all()
+        all_users = User.objects.all().order_by('username')
     else:
         all_users = {}
 
