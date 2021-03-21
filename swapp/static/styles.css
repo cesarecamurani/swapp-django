@@ -1,7 +1,27 @@
+/*Defining Nord Palette (https://www.nordtheme.com/)*/
+:root {
+  --polar-night-1: #2e3440;
+  --polar-night-2: #3b4252;
+  --polar-night-3: #434c5e;
+  --polar-night-4: #4c566a;
+  --snow-storm-1: #d8dee9;
+  --snow-storm-2: #e5e9f0;
+  --snow-storm-3: #eceff4;
+  --frost-1: #8fbcbb;
+  --frost-2: #88c0d0;
+  --frost-3: #81a1c1;
+  --frost-4: #5e81ac;
+  --aurora-1: #bf616a;
+  --aurora-2: #d08770;
+  --aurora-3: #ebcb8b;
+  --aurora-4: #a3be8c;
+  --aurora-5: #b48ead;
+}
+
 body {
-  background-color: #eceff4;
+  background-color: var(--snow-storm-3);
   font-family: 'Jura', 'monospace';
-  color: #4c566a;
+  color: var(--polar-night-4);
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -10,7 +30,11 @@ body {
 }
 
 hr {
-  background-color: #5e81ac;
+  background-color: var(--frost-4);
+}
+
+td {
+  font-size: larger;
 }
 
 form {
@@ -18,27 +42,27 @@ form {
 }
 
 .navbar-custom {
-  background-color: #4c566a;
-  color: #e5e9f0;
+  background-color: var(--polar-night-4);
+  color: var(--snow-storm-2);
   font-size: 1.3rem;
   padding-left: 25px;
 }
 
 .navbar-light .navbar-brand {
-  color: #e5e9f0;
+  color: var(--snow-storm-2);
   padding-right: 25px;
 }
 
 .navbar-light .navbar-nav .nav-link {
-  color: #e5e9f0;
+  color: var(--snow-storm-2);
 }
 
 .navbar-light .navbar-nav .nav-link:hover {
-  color: #a3be8c;
+  color: var(--aurora-4);
 }
 
 .navbar-light .navbar-brand:focus, .navbar-light .navbar-brand:hover {
-  color: #a3be8c;
+  color: var(--aurora-4);
 }
 
 .navbar-brand-custom {
@@ -70,40 +94,40 @@ main img
 }
 
 .btn-primary {
-  color: #e5e9f0;
-  background-color: #5e81ac;
-  border-color: #5e81ac;
+  color: var(--snow-storm-2);
+  background-color: var(--frost-4);
+  border-color: var(--frost-4);
 }
 
 .btn-primary:hover {
-  color: #4c566a;
-  background-color: #a3be8c;
-  border-color: #a3be8c;
+  color: var(--polar-night-4);
+  background-color: var(--aurora-4);
+  border-color: var(--aurora-4);
 }
 
 .btn-primary:focus {
-  color: #e5e9f0;
-  background-color: #5e81ac;
-  border-color: #5e81ac;
+  color: var(--snow-storm-2);
+  background-color: var(--frost-4);
+  border-color: var(--frost-4);
 }
 
 a {
-  color: #5e81ac;
+  color: var(--frost-4);
 }
 
 a:hover {
-  color: #a3be8c;
+  color: var(--aurora-5);
   text-decoration: underline;
 }
 
 .table {
-  color: #4c566a;
-  background-color: #d8dee9;
+  color: var(--polar-night-4);
+  background-color: var(--snow-storm-1);
 }
 
 .table tbody tr:nth-of-type(odd) {
-  background-color: #81a1c1;
-  color: #e5e9f0;
+  background-color: var(--frost-3);
+  color: var(--snow-storm-2);
 }
 
 .alert {
@@ -115,37 +139,53 @@ a:hover {
 }
 
 .success {
-  color: #4c566a;
-  background-color: #a3be8c;
+  color: var(--polar-night-4);
+  background-color: var(--aurora-4);
 }
 
 .info {
-  color: #4c566a;
-  background-color: #a3be8c;
+  color: var(--polar-night-4);
+  background-color: var(--aurora-4);
 }
 
 .error {
-  color: #e5e9f0;
-  background-color: #bf616a;
+  color: var(--snow-storm-2);
+  background-color: var(--aurora-1);
 }
 
 .p-5 {
   padding: 1rem !important;
+  /*border-radius: 0.5rem;*/
+  /*background-color: #e5e9f0;*/
+  /*margin-top: 20px;*/
 }
 
 input:hover {
-  background-color: #a3be8c;
+  background-color: var(--aurora-5);
 }
 
 .forms-container {
-  background-color: #d8dee9;
+  background-color: var(--snow-storm-1);
   padding: 25px 25px 10px 25px;
   border-radius: 0.5rem;
-  width: 500px;
+  width: 450px;
   position: fixed;
   right: 0;
   left: 0;
   margin-top: 20px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.user-container {
+  background-color: var(--snow-storm-1);
+  border-radius: 0.5rem;
+  font-size: larger;
+  padding: 15px;
+  width: 400px;
+  right: 0;
+  left: 0;
+  margin-top: 25px;
   margin-right: auto;
   margin-left: auto;
 }
@@ -156,10 +196,29 @@ footer {
   bottom: 0;
   width: 100%;
   height: 50px;
-  background-color: #4c566a;
-  color: #e5e9f0;
+  background-color: var(--polar-night-4);
+  color: var(--snow-storm-2);
 }
 
 .slogan {
   font-size: small;
 }
+
+.username {
+  background-color: var(--aurora-4);
+  border-radius: 0.5rem;
+  font-size: larger;
+  padding: 5px 10px 5px 10px;
+  right: 0;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;
+  width: max-content;
+}
+.body-internal {
+  padding-top: 15px;
+  padding-bottom: 30px;
+  border-radius: 0.5rem;
+  background-color: #e5e9f0;
+}
+

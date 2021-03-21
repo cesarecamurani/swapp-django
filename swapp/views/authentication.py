@@ -7,8 +7,8 @@ from django.db import transaction
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.shortcuts import render, redirect
-import pdb
 from swapp.forms import UserCreateForm, ProfileCreateForm, UserLoginForm
+# import pdb
 
 
 @transaction.atomic
@@ -35,7 +35,7 @@ def register_request(request):
         user_form = UserCreateForm()
         profile_form = ProfileCreateForm()
 
-    return render(request, 'register.html', {
+    return render(request, 'registration/register.html', {
         'user_form': user_form,
         'profile_form': profile_form
     })

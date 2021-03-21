@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    {% if user_details.id == user.id %}
+        - Your profile
+    {% else %}
+        - {{ user_details.username }} profile
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class='body-internal'>
+        <div class='username'>
+            {% if user_details.id == user.id %}
+                <h2>Your profile</h2>
+            {% else %}
+                <h2>{{ user_details.username }} profile</h2>
+            {% endif %}
+        </div>
+        <br>
+        <br>
+        <h2>Details:</h2>
+        <div class='user-container'>
+            <p>Email: <a href='mailto:{{ user_details.email }}'>{{ user_details.email }}</a></p>
+            <hr>
+            <p>Phone Number: <a href='tel:{{ user_details.phone_number }}'>{{ user_details.profile.phone_number }}</a></p>
+            <hr>
+            <p>City: {{ user_details.profile.city }}</p>
+            <hr>
+            <p>Country: {{ user_details.profile.country }}</p>
+            <hr>
+            <p>Address: {{ user_details.profile.address }}</p>
+        </div>
+        <br><br>
+        <h2>Shop:</h2>
+        <br>
+        {% if user_items %}
+            {% for item in user_items %}
+                <div>{{ item }}</div>
+            {% endfor %}
+        {% elif user_details.id == user.id %}
+            <br>
+            <h3>You didn't upload any item or service yet...</h3>
+        {% else %}
+            <br>
+            <h3>Sorry, {{ user_details.username }} didn't upload any item or service yet...</h3>
+        {% endif %}
+    </div>
+{% endblock %}
