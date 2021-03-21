@@ -1,6 +1,7 @@
 from django.forms import *
 from django.contrib.auth.models import User
 from swapp.models.profile import Profile
+from django.contrib.auth.forms import AuthenticationForm
 
 
 class UserCreateForm(ModelForm):
@@ -16,7 +17,7 @@ class UserCreateForm(ModelForm):
 
         for field_name, field in self.fields.items():
             self.fields[field_name].widget.attrs = {
-                'autocomplete': 'off', 'class': 'form-control', 'placeholder': field.label
+                'class': 'form-control', 'placeholder': field.label, 'autocomplete': 'off'
             }
 
         self.fields['password'].widget = PasswordInput(
@@ -47,5 +48,15 @@ class ProfileCreateForm(ModelForm):
 
         for field_name, field in self.fields.items():
             self.fields[field_name].widget.attrs = {
-                'autocomplete': 'off', 'class': 'form-control', 'placeholder': field.label
+                'class': 'form-control', 'placeholder': field.label, 'autocomplete': 'off'
             }
+
+
+class UserLoginForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super(UserLoginForm, self).__init__(*args, **kwargs)
+
+    username = CharField(widget=TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Username', 'autocomplete': 'off'}))
+    password = CharField(widget=PasswordInput(
+        attrs={'class': 'form-control', 'placeholder': 'Password', 'autocomplete': 'off'}))

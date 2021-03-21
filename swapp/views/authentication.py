@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.contrib.auth.forms import AuthenticationForm
+# from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.shortcuts import render, redirect
 import pdb
-from swapp.forms import UserCreateForm, ProfileCreateForm
+from swapp.forms import UserCreateForm, ProfileCreateForm, UserLoginForm
 
 
 @transaction.atomic
@@ -35,7 +35,7 @@ def register_request(request):
         user_form = UserCreateForm()
         profile_form = ProfileCreateForm()
 
-    return render(request, 'register.djt', {
+    return render(request, 'register.html', {
         'user_form': user_form,
         'profile_form': profile_form
     })
@@ -44,7 +44,7 @@ def register_request(request):
 @transaction.atomic
 def login_request(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
+        form = UserLoginForm(request, data=request.POST)
 
         if form.is_valid():
             username = form.cleaned_data.get('username')
@@ -62,8 +62,9 @@ def login_request(request):
                 messages.error(request, 'Invalid username or password.')
         else:
             messages.error(request, 'Invalid username or password.')
+    else:
+        form = UserLoginForm()
 
-    form = AuthenticationForm()
     return render(request, 'registration/login.html', {'login_form': form})
 
 
@@ -71,4 +72,4 @@ def login_request(request):
 def logout_request(request):
     logout(request)
     messages.info(request, 'You\'ve been successfully logged out.')
-    return redirect('/')
+    return redirect('login')
