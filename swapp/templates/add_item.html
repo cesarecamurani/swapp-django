@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+   - Add an Item or Service
+{% endblock %}
+
+{% block body %}
+    <div class='forms-container'>
+        <h2>Add an Item or Service</h2>
+        <hr>
+        <form method='post'>
+            {% csrf_token %}
+            {% for field in item_form %}
+                <div class='form-group'> {{ field }} </div>
+            {% endfor %}
+            <br>
+            <button class='btn btn-primary' type='submit'>Add</button>
+        </form>
+    </div>
+{% endblock %}

@@ -4,9 +4,11 @@ from __future__ import unicode_literals
 # import pdb
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.db import transaction
+from django.shortcuts import render, redirect
 
 
 @login_required
+@transaction.atomic
 def index(request):
-    return render(request, 'layout.html')
+    return redirect('items')

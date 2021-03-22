@@ -11,4 +11,6 @@ class Item(models.Model):
     name = models.CharField(max_length=15)
     description = models.CharField(max_length=50)
     created_at = models.DateTimeField()
+    donated = models.BooleanField(default=False)
+    picture = models.ImageField(upload_to='pictures/', default='')
     owner = models.ForeignKey(User, editable=True, on_delete=models.CASCADE)

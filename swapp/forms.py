@@ -1,6 +1,9 @@
 from django.forms import *
 from django.contrib.auth.models import User
+
+from swapp.models.item import Item
 from swapp.models.profile import Profile
+from swapp.models.donation import Donation
 from django.contrib.auth.forms import AuthenticationForm
 
 
@@ -60,3 +63,23 @@ class UserLoginForm(AuthenticationForm):
         attrs={'class': 'form-control', 'placeholder': 'Username', 'autocomplete': 'off'}))
     password = CharField(widget=PasswordInput(
         attrs={'class': 'form-control', 'placeholder': 'Password', 'autocomplete': 'off'}))
+
+
+class ItemCreateForm(ModelForm):
+    class Meta:
+        model = Item
+        fields = ['name', 'description']
+
+    def __init__(self, *args, **kwargs):
+        super(ItemCreateForm, self).__init__(*args, **kwargs)
+
+    name = CharField(widget=TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Name', 'autocomplete': 'off'}))
+    description = CharField(widget=TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Description', 'autocomplete': 'off'}))
+
+
+class DonationCreateForm(ModelForm):
+    class Meta:
+        model = Donation
+        fields = []

@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+   - Donations
+{% endblock %}
+
+{% block body %}
+    <div class='body-internal'>
+        <div class='username'>
+            <h2>Donations</h2>
+            <p>All items will be donated to <a href='https://www.traid.org.uk/' target='_blank'>traid.org</a></p>
+        </div>
+        <br>
+        {% for donation in all_donations %}
+            <div class='user-container'>
+                <p> <strong>{{ donation.item.name}} </strong></p>
+                <hr>
+                <p> Kindly donated by <a href='users/{{ donation.donor.username }}'>{{ donation.donor.username }}</a> @ {{ donation.item.created_at }}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

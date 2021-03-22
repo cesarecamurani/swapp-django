@@ -2,9 +2,9 @@
 
 {% block title %}
     {% if user_details.id == user.id %}
-        - Your profile
+        - You
     {% else %}
-        - {{ user_details.username }} profile
+        - {{ user_details.username }}
     {% endif %}
 {% endblock %}
 
@@ -12,9 +12,9 @@
     <div class='body-internal'>
         <div class='username'>
             {% if user_details.id == user.id %}
-                <h2>Your profile</h2>
+                <h2>You</h2>
             {% else %}
-                <h2>{{ user_details.username }} profile</h2>
+                <h2>{{ user_details.username }}</h2>
             {% endif %}
         </div>
         <br>
@@ -33,14 +33,38 @@
         </div>
         <br><br>
         <h2>Shop:</h2>
-        <br>
-        {% if user_items %}
+        {% if user_details.id == user.id and user_items %}
             {% for item in user_items %}
-                <div>{{ item }}</div>
+                <div class='user-container'>
+                    <a href='/users/{{ item.name }}'> {{ item.name }} </a>
+                    <hr>
+                    <div class='buttons-container'>
+                        <form method='post' action='/donations'>
+                            {% csrf_token %}
+                            <input type='hidden' name='item_id' value='{{ item.id }}' />
+                            <button class='btn btn-primary' type='submit'>Donate</button>
+                        </form>
+                        <form method='post' action='/items/{{ item.id }}/delete'>
+                            {% csrf_token %}
+                            <input type='hidden' name='item_id' value='{{ item.id }}' />
+                            <button class='btn btn-delete' type='submit'>Delete</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+            <br>
+            <p><a href='/items/add_item'>Add Item or Service</a></p>
+        {% elif user_items %}
+            {% for item in user_items %}
+                <div class='user-container'>
+                    <a href='/users/{{ item.name }}'> {{ item.name }} </a>
+                </div>
             {% endfor %}
         {% elif user_details.id == user.id %}
             <br>
             <h3>You didn't upload any item or service yet...</h3>
+            <br>
+            <p><a href='/items/add_item'>Add Item or Service</a></p>
         {% else %}
             <br>
             <h3>Sorry, {{ user_details.username }} didn't upload any item or service yet...</h3>

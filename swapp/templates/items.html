@@ -1,27 +1,29 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-   - Swappers
+   - Market
 {% endblock %}
 
 {% block body %}
     <div class='body-internal'>
         <div class='username'>
-             <h2>Swappers</h2>
+             <h2>Market</h2>
         </div>
-        <form action='/users' method='post'>
+        <form action='/items' method='post'>
             {% csrf_token %}
             <div class='form-group'>
                 <label>
-                    <input autocomplete='off' autofocus class='form-control' name='search' placeholder='Search Swapper' type='text'>
+                    <input autocomplete='off' autofocus class='form-control' name='search' placeholder='Search Item or Service' type='text'>
                 </label>
             </div>
             <button class='btn btn-primary' type='submit'>Search</button>
         </form>
         <br>
-        {% for user in all_users %}
+        {% for item in all_items %}
             <div class='user-container'>
-                <a href='/users/{{ user.username }}'> {{ user.username }} </a>
+                <a href='/users/{{ item.name }}'> {{ item.name }} </a>
+                <hr>
+                <p> Added by <a href='users/{{ item.owner.username }}'>{{ item.owner.username }}</a> @ {{ item.created_at }}
             </div>
         {% endfor %}
     </div>

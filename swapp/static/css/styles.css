@@ -46,6 +46,9 @@ form {
   color: var(--snow-storm-2);
   font-size: 1.3rem;
   padding-left: 25px;
+  position: fixed;
+  overflow: hidden;
+  width: 100%;
 }
 
 .navbar-light .navbar-brand {
@@ -69,28 +72,30 @@ form {
   font-size: 2.5rem;
 }
 
-main .form-control
-{
-  /* Center form controls */
+main .form-control {
   display: inline-block;
-
-  /* Override Bootstrap's 100% width for form controls */
   width: auto;
 }
 
-main
-{
-  /* Scroll horizontally as needed */
+main {
   overflow-x: auto;
-
-  /* Center contents */
   text-align: center;
 }
 
-main img
-{
-  /* Constrain images on small screens */
+main img {
   max-width: 100%;
+}
+
+.btn-delete {
+  color: var(--snow-storm-2);
+  background-color: var(--frost-4);
+  border-color: var(--frost-4);
+}
+
+.btn-delete:hover {
+  color: var(--snow-storm-2);
+  background-color: var(--aurora-1);
+  border-color: var(--aurora-1);
 }
 
 .btn-primary {
@@ -109,6 +114,9 @@ main img
   color: var(--snow-storm-2);
   background-color: var(--frost-4);
   border-color: var(--frost-4);
+}
+.buttons-container {
+  display: block ruby;
 }
 
 a {
@@ -132,10 +140,15 @@ a:hover {
 
 .alert {
   font-size: larger;
+  position: unset;
   border-radius: 0.5rem;
   height: 40px;
   align-content: center;
   display: grid;
+  width: max-content;
+  margin-top: 120px;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .success {
@@ -153,11 +166,12 @@ a:hover {
   background-color: var(--aurora-1);
 }
 
+.messages {
+  padding: unset;
+}
+
 .p-5 {
   padding: 1rem !important;
-  /*border-radius: 0.5rem;*/
-  /*background-color: #e5e9f0;*/
-  /*margin-top: 20px;*/
 }
 
 input:hover {
@@ -169,12 +183,10 @@ input:hover {
   padding: 25px 25px 10px 25px;
   border-radius: 0.5rem;
   width: 450px;
-  position: fixed;
   right: 0;
   left: 0;
-  margin-top: 20px;
-  margin-right: auto;
-  margin-left: auto;
+  overflow: scroll;
+  margin: 120px auto;
 }
 
 .user-container {
@@ -215,10 +227,13 @@ footer {
   margin-left: auto;
   width: max-content;
 }
+
 .body-internal {
   padding-top: 15px;
   padding-bottom: 30px;
   border-radius: 0.5rem;
   background-color: #e5e9f0;
+  overflow: scroll;
+  margin-top: 120px;
+  margin-bottom: 120px;
 }
-
