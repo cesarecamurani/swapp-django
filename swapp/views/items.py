@@ -8,7 +8,7 @@ from datetime import datetime
 from django.db import transaction
 from django.http import HttpResponseRedirect
 
-from swapp.forms import ItemCreateForm
+from swapp.forms import ItemCreateForm, SwappRequestCreateForm
 from swapp.models import Item
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
@@ -35,13 +35,12 @@ def item_request(request, item_id):
     if request.method == 'GET':
         item_details = get_object_or_404(Item, pk=item_id)
 
-        return render(request, 'user.html', {'item_details': item_details})
+        return render(request, 'item.html', {'item_details': item_details})
 
 
 @login_required
 @transaction.atomic
 def item_delete_request(request, item_id):
-    # pdb.set_trace()
     if request.method == 'POST':
         item = get_object_or_404(Item, pk=item_id)
         item.delete()
@@ -55,7 +54,7 @@ def item_delete_request(request, item_id):
 @transaction.atomic
 def item_create_request(request):
     if request.method == 'POST':
-        item_form = ItemCreateForm(request.POST)
+        item_form = ItemCreateForm(request.POST, request.FILES)
 
         if item_form.is_valid():
             item = item_form.save(commit=False)
@@ -72,4 +71,36 @@ def item_create_request(request):
 
     return render(request, 'add_item.html', {
         'item_form': item_form
+    })
+
+
+@login_required
+@transaction.atomic
+def item_swapp_request(request, item_id):
+    user = request.user
+    items = user.item_set.all()
+
+    if request.method == 'POST':
+        swapp_request_form = SwappRequestCreateForm(request.POST, user=user)
+
+        if swapp_request_form.is_valid():
+            swapp_request = swapp_request_form.save(commit=False)
+            swapp_request.offered_product = get_object_or_404(Item, pk=request.POST['offered_product'])
+            swapp_request.requested_product = get_object_or_404(Item, pk=item_id)
+            swapp_request.offered_product_owner_id = user.id
+            swapp_request.requested_product_owner_id = swapp_request.requested_product.owner_id
+
+            swapp_request.save()
+
+            messages.success(request, 'Swapp request sent successfully.')
+
+            return redirect('/')
+
+        messages.error(request, 'Unsuccessful swapp request. Invalid information.')
+    else:
+        swapp_request_form = SwappRequestCreateForm(user=user)
+
+    return render(request, 'swapp_request.html', {
+        'swapp_request_form': swapp_request_form,
+        'items': items
     })

@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+   - Send a Swapp Request
+{% endblock %}
+
+{% block body %}
+    <div class='forms-container'>
+        <h3> Select one of your items </h3>
+        <hr>
+        {% if items %}
+            <form method='post' action='swapp_request'>
+                {% csrf_token %}
+                {% for field in swapp_request_form %}
+                    <div class='form-group'> {{ field }} </div>
+                {% endfor %}
+                <br>
+                <button class='btn btn-primary' type='submit'>Make a request</button>
+            </form>
+        {% else %}
+            <p>Sorry, you don't have any item or service to offer...</p>
+        {% endif %}
+        <hr>
+        <p><a href='javascript:window.history.back();'>Back to the item page</a></p>
+    </div>
+{% endblock %}

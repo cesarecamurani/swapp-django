@@ -21,7 +21,7 @@
         <br>
         {% for item in all_items %}
             <div class='user-container'>
-                <a href='/users/{{ item.name }}'> {{ item.name }} </a>
+                <a href='/items/{{ item.id }}'> {{ item.name }} </a>
                 <hr>
                 <p> Added by <a href='users/{{ item.owner.username }}'>{{ item.owner.username }}</a> @ {{ item.created_at }}
             </div>

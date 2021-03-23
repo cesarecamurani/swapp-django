@@ -7,8 +7,9 @@ from django.db import transaction
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.shortcuts import render, redirect
-from swapp.forms import UserCreateForm, ProfileCreateForm, UserLoginForm
-# import pdb
+from swapp.forms import UserCreateForm, ProfileCreateForm, UserLoginForm, ChangePasswordForm
+
+import pdb
 
 
 @transaction.atomic
@@ -24,6 +25,7 @@ def register_request(request):
             login(request, user)
             messages.success(request, 'Registration successful.')
             user.refresh_from_db()
+
             profile_form = ProfileCreateForm(request.POST, instance=user.profile)
             profile_form.full_clean()
             profile_form.save()
@@ -73,3 +75,32 @@ def logout_request(request):
     logout(request)
     messages.info(request, 'You\'ve been successfully logged out.')
     return redirect('login')
+
+
+@transaction.atomic
+def change_password_request(request):
+    if request.method == 'POST':
+        password_form = ChangePasswordForm(request.POST)
+
+        if password_form.is_valid():
+            username = password_form.cleaned_data.get('username')
+            password = password_form.cleaned_data.get('old_password')
+            new_password = password_form.cleaned_data.get('new_password')
+
+            user = authenticate(username=username, password=password)
+
+            if user is not None:
+                user.set_password(new_password)
+                user.save()
+
+                messages.info(request, 'Password changed successfully.')
+
+                return redirect('/')
+            else:
+                messages.error(request, 'Invalid username or password.')
+        else:
+            messages.error(request, 'Invalid username or password.')
+    else:
+        password_form = ChangePasswordForm()
+
+    return render(request, 'registration/change_password.html', {'password_form': password_form})

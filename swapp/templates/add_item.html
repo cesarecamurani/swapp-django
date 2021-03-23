@@ -8,11 +8,11 @@
     <div class='forms-container'>
         <h2>Add an Item or Service</h2>
         <hr>
-        <form method='post'>
+        <form enctype='multipart/form-data' method='post'>
             {% csrf_token %}
-            {% for field in item_form %}
-                <div class='form-group'> {{ field }} </div>
-            {% endfor %}
+                {% for field in item_form %}
+                    <div class='form-group'> {{ field }} </div>
+                {% endfor %}
             <br>
             <button class='btn btn-primary' type='submit'>Add</button>
         </form>

@@ -36,7 +36,7 @@
         {% if user_details.id == user.id and user_items %}
             {% for item in user_items %}
                 <div class='user-container'>
-                    <a href='/users/{{ item.name }}'> {{ item.name }} </a>
+                    <a href='/items/{{ item.id }}'> {{ item.name }} </a>
                     <hr>
                     <div class='buttons-container'>
                         <form method='post' action='/donations'>
@@ -57,7 +57,7 @@
         {% elif user_items %}
             {% for item in user_items %}
                 <div class='user-container'>
-                    <a href='/users/{{ item.name }}'> {{ item.name }} </a>
+                    <a href='/items/{{ item.id }}'> {{ item.name }} </a>
                 </div>
             {% endfor %}
         {% elif user_details.id == user.id %}

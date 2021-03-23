@@ -9,6 +9,6 @@ import uuid
 
 class Donation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    item = models.ForeignKey(Item, editable=False, on_delete=models.PROTECT)
-    donor = models.ForeignKey(User, editable=False, on_delete=models.PROTECT)
+    item = models.ForeignKey(Item, editable=False, on_delete=models.CASCADE)
+    donor = models.ForeignKey(User, editable=False, on_delete=models.CASCADE)
     donated_at = models.DateTimeField()

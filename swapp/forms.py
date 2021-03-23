@@ -1,9 +1,12 @@
+import pdb
+
 from django.forms import *
 from django.contrib.auth.models import User
 
 from swapp.models.item import Item
 from swapp.models.profile import Profile
 from swapp.models.donation import Donation
+from swapp.models.swapp_request import SwappRequest
 from django.contrib.auth.forms import AuthenticationForm
 
 
@@ -65,18 +68,69 @@ class UserLoginForm(AuthenticationForm):
         attrs={'class': 'form-control', 'placeholder': 'Password', 'autocomplete': 'off'}))
 
 
+class ChangePasswordForm(Form):
+    username = CharField(widget=TextInput())
+    old_password = CharField(widget=PasswordInput())
+    new_password = CharField(widget=PasswordInput())
+    new_password_confirmation = CharField(widget=PasswordInput())
+
+    def __init__(self, *args, **kwargs):
+        super(ChangePasswordForm, self).__init__(*args, **kwargs)
+
+        self.fields['username'].widget = TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'Username', 'autocomplete': 'off'}
+        )
+        self.fields['old_password'].widget = PasswordInput(
+            attrs={'class': 'form-control', 'placeholder': 'Old password', 'autocomplete': 'off'}
+        )
+        self.fields['new_password'].widget = PasswordInput(
+            attrs={'class': 'form-control', 'placeholder': 'New password', 'autocomplete': 'off'}
+        )
+        self.fields['new_password_confirmation'].widget = PasswordInput(
+            attrs={'class': 'form-control', 'placeholder': 'Confirm new password', 'autocomplete': 'off'}
+        )
+
+    def clean(self):
+        cleaned_data = super(ChangePasswordForm, self).clean()
+        new_password = cleaned_data.get('new_password')
+        new_password_confirmation = cleaned_data.get('new_password_confirmation')
+
+        if new_password != new_password_confirmation:
+            self.add_error('new_password_confirmation', 'Password does not match')
+
+        return cleaned_data
+
+
 class ItemCreateForm(ModelForm):
     class Meta:
         model = Item
-        fields = ['name', 'description']
+        fields = ['name', 'description', 'picture']
 
     def __init__(self, *args, **kwargs):
         super(ItemCreateForm, self).__init__(*args, **kwargs)
 
     name = CharField(widget=TextInput(
         attrs={'class': 'form-control', 'placeholder': 'Name', 'autocomplete': 'off'}))
-    description = CharField(widget=TextInput(
+    description = CharField(widget=Textarea(
         attrs={'class': 'form-control', 'placeholder': 'Description', 'autocomplete': 'off'}))
+    picture = ImageField(widget=ClearableFileInput(
+        attrs={'class': 'form-control', 'type': 'file'}))
+
+
+class SwappRequestCreateForm(ModelForm):
+    class Meta:
+        model = SwappRequest
+        fields = ['offered_product']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+
+        super(SwappRequestCreateForm, self).__init__(*args, **kwargs)
+
+        self.fields['offered_product'].widget = Select(
+            choices=Item.objects.all().filter(owner=user).values_list('id', 'name'),
+            attrs={'class': 'form-control', 'placeholder': 'Username', 'autocomplete': 'off'}
+        )
 
 
 class DonationCreateForm(ModelForm):

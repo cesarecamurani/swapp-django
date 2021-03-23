@@ -11,12 +11,19 @@
             <p>All items will be donated to <a href='https://www.traid.org.uk/' target='_blank'>traid.org</a></p>
         </div>
         <br>
-        {% for donation in all_donations %}
-            <div class='user-container'>
-                <p> <strong>{{ donation.item.name}} </strong></p>
-                <hr>
-                <p> Kindly donated by <a href='users/{{ donation.donor.username }}'>{{ donation.donor.username }}</a> @ {{ donation.item.created_at }}
-            </div>
-        {% endfor %}
+        {% if all_donations %}
+            {% for donation in all_donations %}
+                <div class='user-container'>
+                    <p> <strong>{{ donation.item.name }} </strong></p>
+                    <hr>
+                    <p> <strong>{{ donation.item.description }} </strong></p>
+                    <hr>
+                    <p> Kindly donated by <a href='users/{{ donation.donor.username }}'>{{ donation.donor.username }}</a> @ {{ donation.item.created_at }}
+                </div>
+            {% endfor %}
+        {% else %}
+            <br>
+            <h2>No donations made yet...</h2>
+        {% endif %}
     </div>
 {% endblock %}
