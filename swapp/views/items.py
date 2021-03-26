@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from uuid import uuid4
-
-from django.contrib import messages
-from django.contrib.auth.models import User
+import random
+import string
 from datetime import datetime
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.db import transaction
 from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from swapp.forms import ItemCreateForm, SwappRequestCreateForm
-from swapp.models import Item
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
+from swapp.models import Item, SwappRequest
 import pdb
 
 
@@ -21,7 +21,7 @@ import pdb
 @transaction.atomic
 def items_request(request):
     if request.method == 'GET':
-        all_items = Item.objects.all().filter(donated=False).order_by('created_at')
+        all_items = Item.objects.all().filter(donated=False).order_by('-created_at')
     elif request.method == 'POST':
         query = request.POST['search']
         all_items = Item.objects.filter(name__icontains=query)
@@ -80,7 +80,7 @@ def item_create_request(request):
 @transaction.atomic
 def new_swapp_request(request, item_id):
     user = request.user
-    items = user.item_set.all()
+    items = user.item_set.all().filter(donated=False, out_for_request=False)
 
     if request.method == 'POST':
         swapp_request_form = SwappRequestCreateForm(request.POST, user=user)
@@ -93,12 +93,20 @@ def new_swapp_request(request, item_id):
             swapp_request.requested_product = get_object_or_404(Item, pk=item_id)
             swapp_request.offered_product_owner_id = user.id
             swapp_request.requested_product_owner_id = swapp_request.requested_product.owner_id
-            swapp_request.trace_id = str(uuid4())
+            swapp_request.trace_id = __generate_trace_id()
             swapp_request.save()
 
-            item = swapp_request.offered_product
-            item.out_for_request = True
-            item.save()
+            existing_requests_for_item = SwappRequest.objects.all().filter(requested_product=swapp_request.offered_product)
+
+            for req in existing_requests_for_item:
+                req.state = 'RJ'
+                req.save()
+                req.offered_product.out_for_request = False
+                req.offered_product.save()
+
+            offered_item = swapp_request.offered_product
+            offered_item.out_for_request = True
+            offered_item.save()
 
             messages.success(request, 'Swapp request sent successfully.')
 
@@ -112,3 +120,11 @@ def new_swapp_request(request, item_id):
         'swapp_request_form': swapp_request_form,
         'items': items
     })
+
+
+def __generate_trace_id():
+    return 'SWP-' + ''.join(
+        random.choices(
+            string.ascii_uppercase + string.digits, k=16
+        )
+    )

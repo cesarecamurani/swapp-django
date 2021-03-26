@@ -12,37 +12,69 @@
             <h2>Request ID: {{ swapp_request_details.trace_id }}</h2>
         </div>
         <div class='user-container'>
-            {% if offerer.id == user.id %}
-                <p>You would like to swapp:</p>
-                <p><a href='/items/{{ offered_item.id }}'>{{ offered_item.name }}</a></p>
-                <p>for <a href='/users/{{ offerer.username }}'>{{ offerer.username }}</a>'s: </p>
-                <p><a href='/items/{{ requested_item.id }}'>{{ requested_item.name }}</a></p>
-            {% else %}
-                <p><a href='/users/{{ offerer.username }}'>{{ offerer.username }}</a> would like to swapp:</p>
-                <p><a href='/items/{{ offered_item.id }}'>{{ offered_item.name }}</a></p>
-                <p>for your:</p>
-                <p><a href='/items/{{ requested_item.id }}'>{{ requested_item.name }}</a></p>
-            {% endif %}
-            <hr>
-            {% if offerer.id == user.id %}
-                Request Status: {{ swapp_request_details.state }}
+            {% if request_state == 'Initial' %}
+                {% if offerer.id == user.id %}
+                    <p>You would like to swapp:</p>
+                    <p><a href='/items/{{ offered_item.id }}'>{{ offered_item.name }}</a></p>
+                    <p>for <a href='/users/{{ requested_item_owner.username }}'>{{ requested_item_owner.username }}</a>'s: </p>
+                    <p><a href='/items/{{ requested_item.id }}'>{{ requested_item.name }}</a></p>
+                {% else %}
+                    <p><a href='/users/{{ offerer.username }}'>{{ offerer.username }}</a> would like to swapp:</p>
+                    <p><a href='/items/{{ offered_item.id }}'>{{ offered_item.name }}</a></p>
+                    <p>for your:</p>
+                    <p><a href='/items/{{ requested_item.id }}'>{{ requested_item.name }}</a></p>
+                {% endif %}
+                <hr>
+                {% if offerer.id == user.id %}
+                    Request Status: <div style='color: var(--aurora-5)'><b>{{ request_state }}</b>
+                    <br>
+                {% else %}
+                    <div class='buttons-container'>
+                    <form method='post' action='{{ swapp_request_details.trace_id }}/accept_swapp_request'>
+                        {% csrf_token %}
+                        <input type='hidden' name='swapp_request_id' value='{{  swapp_request_details.id }}' />
+                        <button class='btn btn-primary' type='submit'>Accept</button>
+                    </form>
+                    <form method='post' action='{{ swapp_request_details.trace_id }}/reject_swapp_request'>
+                        {% csrf_token %}
+                        <input type='hidden' name='swapp_request_id' value='{{ swapp_request_details.id }}' />
+                        <button class='btn btn-delete' type='submit'>Reject</button>
+                    </form>
+                </div>
+                {% endif %}
+            {% elif request_state == 'Accepted' %}
+                {% if offerer.id == user.id %}
+                    <p>You swapped:</p>
+                    <p><b>{{ offered_item.name }}</b></p>
+                    <p>for <a href='/users/{{ requested_item_owner.username }}'>{{ requested_item_owner.username }}</a>'s: </p>
+                    <p><b>{{ requested_item.name }}</b></p>
+                {% else %}
+                    <p>You swapped:</p>
+                    <p><b>{{ requested_item.name }}</b></p>
+                    <p>for <a href='/users/{{ offerer.username }}'>{{ offerer.username }}</a>'s: </p>
+                    <p><b>{{ offered_item.name }}</b></p>
+                {% endif %}
+                <hr>
+                Request Status: <div style='color: var(--aurora-4)'><b>{{ request_state }}</b>
                 <br>
             {% else %}
-                <div class='buttons-container'>
-                <form method='post' action='/accept_swapp_request'>
-                    {% csrf_token %}
-                    <input type='hidden' name='swapp_request_id' value='{{  swapp_request_details.id }}' />
-                    <button class='btn btn-primary' type='submit'>Accept</button>
-                </form>
-                <form method='post' action='/reject_swapp_request'>
-                    {% csrf_token %}
-                    <input type='hidden' name='swapp_request_id' value='{{ swapp_request_details.id }}' />
-                    <button class='btn btn-delete' type='submit'>Reject</button>
-                </form>
-            </div>
+                {% if offerer.id == user.id %}
+                    <p>You wanted to swapp:</p>
+                    <p><b>{{ offered_item.name }}</b></p>
+                    <p>for <a href='/users/{{ requested_item_owner.username }}'>{{ requested_item_owner.username }}</a>'s: </p>
+                    <p><b>{{ requested_item.name }}</b></p>
+                {% else %}
+                    <p>You were requested to swapp:</p>
+                    <p><b>{{ requested_item.name }}</b></p>
+                    <p>for <a href='/users/{{ offerer.username }}'>{{ offerer.username }}</a>'s: </p>
+                    <p><b>{{ offered_item.name }}</b></p>
+                {% endif %}
+                <hr>
+                Request Status: <div style='color: var(--aurora-1)'><b>{{ request_state }}</b>
+                <br>
             {% endif %}
-            <br>
-            <p><a href='javascript:window.history.back();'>Back to the profile page</a></p>
+             <br>
+            <p><a href='/users/{{ user.username }}'>Back to the profile page</a></p>
         </div>
     </div>
 {% endblock %}

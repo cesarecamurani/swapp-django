@@ -124,7 +124,7 @@ class SwappRequestCreateForm(ModelForm):
         super(SwappRequestCreateForm, self).__init__(*args, **kwargs)
 
         self.fields['offered_product'].widget = Select(
-            choices=Item.objects.all().filter(owner=user).values_list('id', 'name'),
+            choices=Item.objects.all().filter(owner=user, donated=False, out_for_request=False).values_list('id', 'name'),
             attrs={'class': 'form-control', 'placeholder': 'Username', 'autocomplete': 'off'}
         )
 

@@ -6,10 +6,10 @@
 
 {% block body %}
     <div class='forms-container'>
-        <h3> Select one of your items </h3>
+        <h3> Select one of your Items or Services</h3>
         <hr>
         {% if items %}
-            <form method='post' action='swapp_request'>
+            <form method='post' action='new_swapp_request'>
                 {% csrf_token %}
                 {% for field in swapp_request_form %}
                     <div class='form-group'> {{ field }} </div>

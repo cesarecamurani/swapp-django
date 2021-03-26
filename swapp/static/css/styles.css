@@ -184,7 +184,7 @@ a.email:hover {
 }
 
 input:hover {
-  background-color: var(--aurora-5);
+  background-color: var(--aurora-4);
 }
 
 textarea.form-control {
