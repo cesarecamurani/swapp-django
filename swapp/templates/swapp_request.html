@@ -1,26 +1,48 @@
 {% extends 'layout.html' %}
 
+{% load static %}
+
 {% block title %}
-   - Send a Swapp Request
+   - Request ID: {{ swapp_request_details.trace_id }}
 {% endblock %}
 
 {% block body %}
-    <div class='forms-container'>
-        <h3> Select one of your items </h3>
-        <hr>
-        {% if items %}
-            <form method='post' action='swapp_request'>
-                {% csrf_token %}
-                {% for field in swapp_request_form %}
-                    <div class='form-group'> {{ field }} </div>
-                {% endfor %}
+    <div class='body-internal'>
+        <div class='username'>
+            <h2>Request ID: {{ swapp_request_details.trace_id }}</h2>
+        </div>
+        <div class='user-container'>
+            {% if offerer.id == user.id %}
+                <p>You would like to swapp:</p>
+                <p><a href='/items/{{ offered_item.id }}'>{{ offered_item.name }}</a></p>
+                <p>for <a href='/users/{{ offerer.username }}'>{{ offerer.username }}</a>'s: </p>
+                <p><a href='/items/{{ requested_item.id }}'>{{ requested_item.name }}</a></p>
+            {% else %}
+                <p><a href='/users/{{ offerer.username }}'>{{ offerer.username }}</a> would like to swapp:</p>
+                <p><a href='/items/{{ offered_item.id }}'>{{ offered_item.name }}</a></p>
+                <p>for your:</p>
+                <p><a href='/items/{{ requested_item.id }}'>{{ requested_item.name }}</a></p>
+            {% endif %}
+            <hr>
+            {% if offerer.id == user.id %}
+                Request Status: {{ swapp_request_details.state }}
                 <br>
-                <button class='btn btn-primary' type='submit'>Make a request</button>
-            </form>
-        {% else %}
-            <p>Sorry, you don't have any item or service to offer...</p>
-        {% endif %}
-        <hr>
-        <p><a href='javascript:window.history.back();'>Back to the item page</a></p>
+            {% else %}
+                <div class='buttons-container'>
+                <form method='post' action='/accept_swapp_request'>
+                    {% csrf_token %}
+                    <input type='hidden' name='swapp_request_id' value='{{  swapp_request_details.id }}' />
+                    <button class='btn btn-primary' type='submit'>Accept</button>
+                </form>
+                <form method='post' action='/reject_swapp_request'>
+                    {% csrf_token %}
+                    <input type='hidden' name='swapp_request_id' value='{{ swapp_request_details.id }}' />
+                    <button class='btn btn-delete' type='submit'>Reject</button>
+                </form>
+            </div>
+            {% endif %}
+            <br>
+            <p><a href='javascript:window.history.back();'>Back to the profile page</a></p>
+        </div>
     </div>
 {% endblock %}

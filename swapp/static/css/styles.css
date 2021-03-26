@@ -114,6 +114,7 @@ main img {
   background-color: var(--frost-4);
   border-color: var(--frost-4);
 }
+
 .buttons-container {
   display: block ruby;
 }
@@ -124,6 +125,15 @@ a {
 
 a:hover {
   color: var(--aurora-5);
+  text-decoration: underline;
+}
+
+a.email {
+  color: var(--aurora-4);
+}
+
+a.email:hover {
+  color: var(--aurora-4);
   text-decoration: underline;
 }
 
@@ -203,9 +213,7 @@ select.form-control {
   border-radius: 0.5rem;
   font-size: larger;
   padding: 15px;
-  width: 400px;
-  right: 0;
-  left: 0;
+  width: 500px;
   margin-top: 25px;
   margin-right: auto;
   margin-left: auto;
@@ -226,23 +234,24 @@ footer {
 }
 
 .username {
-  background-color: var(--aurora-4);
+  background-color: var(--frost-4);
+  color: var(--snow-storm-3);
   border-radius: 0.5rem;
   font-size: larger;
   padding: 5px 10px 5px 10px;
-  right: 0;
-  left: 0;
   margin-right: auto;
   margin-left: auto;
-  width: max-content;
 }
 
 .body-internal {
-  padding-top: 15px;
   padding-bottom: 30px;
   border-radius: 0.5rem;
   background-color: #e5e9f0;
   overflow: scroll;
   margin-top: 120px;
   margin-bottom: 120px;
+}
+
+.request-container {
+  display: flex;
 }

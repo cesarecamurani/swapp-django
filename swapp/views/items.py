@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from uuid import uuid4
+
 from django.contrib import messages
 from django.contrib.auth.models import User
 from datetime import datetime
@@ -76,7 +78,7 @@ def item_create_request(request):
 
 @login_required
 @transaction.atomic
-def item_swapp_request(request, item_id):
+def new_swapp_request(request, item_id):
     user = request.user
     items = user.item_set.all()
 
@@ -85,12 +87,18 @@ def item_swapp_request(request, item_id):
 
         if swapp_request_form.is_valid():
             swapp_request = swapp_request_form.save(commit=False)
-            swapp_request.offered_product = get_object_or_404(Item, pk=request.POST['offered_product'])
+
+            offered_product_id = request.POST['offered_product']
+            swapp_request.offered_product = get_object_or_404(Item, pk=offered_product_id)
             swapp_request.requested_product = get_object_or_404(Item, pk=item_id)
             swapp_request.offered_product_owner_id = user.id
             swapp_request.requested_product_owner_id = swapp_request.requested_product.owner_id
-
+            swapp_request.trace_id = str(uuid4())
             swapp_request.save()
+
+            item = swapp_request.offered_product
+            item.out_for_request = True
+            item.save()
 
             messages.success(request, 'Swapp request sent successfully.')
 
@@ -100,7 +108,7 @@ def item_swapp_request(request, item_id):
     else:
         swapp_request_form = SwappRequestCreateForm(user=user)
 
-    return render(request, 'swapp_request.html', {
+    return render(request, 'new_swapp_request.html', {
         'swapp_request_form': swapp_request_form,
         'items': items
     })

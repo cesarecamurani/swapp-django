@@ -69,7 +69,6 @@ class UserLoginForm(AuthenticationForm):
 
 
 class ChangePasswordForm(Form):
-    username = CharField(widget=TextInput())
     old_password = CharField(widget=PasswordInput())
     new_password = CharField(widget=PasswordInput())
     new_password_confirmation = CharField(widget=PasswordInput())
@@ -77,9 +76,6 @@ class ChangePasswordForm(Form):
     def __init__(self, *args, **kwargs):
         super(ChangePasswordForm, self).__init__(*args, **kwargs)
 
-        self.fields['username'].widget = TextInput(
-            attrs={'class': 'form-control', 'placeholder': 'Username', 'autocomplete': 'off'}
-        )
         self.fields['old_password'].widget = PasswordInput(
             attrs={'class': 'form-control', 'placeholder': 'Old password', 'autocomplete': 'off'}
         )

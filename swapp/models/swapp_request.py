@@ -12,6 +12,7 @@ class SwappRequest(models.Model):
     requested_product = models.ForeignKey(Item, related_name='requested_product_id', on_delete=models.CASCADE)
     offered_product_owner_id = models.BigIntegerField()
     requested_product_owner_id = models.BigIntegerField()
+    trace_id = models.UUIDField()
 
     class Status(models.TextChoices):
         INITIAL = 'IN', _('Initial')

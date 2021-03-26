@@ -2,7 +2,7 @@
 
 {% block title %}
     {% if user_details.id == user.id %}
-        - You
+        - {{ user_details.username }} (You)
     {% else %}
         - {{ user_details.username }}
     {% endif %}
@@ -12,7 +12,7 @@
     <div class='body-internal'>
         <div class='username'>
             {% if user_details.id == user.id %}
-                <h2>You</h2>
+                <h2>{{ user_details.username }} (You)</h2>
             {% else %}
                 <h2>{{ user_details.username }}</h2>
             {% endif %}
@@ -21,35 +21,43 @@
         <br>
         <h2>Details:</h2>
         <div class='user-container'>
-            <p>Email: <a href='mailto:{{ user_details.email }}'>{{ user_details.email }}</a></p>
+            <p><b>Email:</b> <a href='mailto:{{ user_details.email }}'>{{ user_details.email }}</a></p>
             <hr>
-            <p>Phone Number: <a href='tel:{{ user_details.phone_number }}'>{{ user_details.profile.phone_number }}</a></p>
+            <p><b>Phone Number:</b> <a href='tel:{{ user_details.phone_number }}'>{{ user_details.profile.phone_number }}</a></p>
             <hr>
-            <p>City: {{ user_details.profile.city }}</p>
+            <p><b>City:</b> {{ user_details.profile.city }}</p>
             <hr>
-            <p>Country: {{ user_details.profile.country }}</p>
+            <p><b>Country:</b> {{ user_details.profile.country }}</p>
             <hr>
-            <p>Address: {{ user_details.profile.address }}</p>
+            <p><b>Address:</b> {{ user_details.profile.address }}</p>
         </div>
-        <br><br>
+        <br>
+        {% if user_details.id == user.id and user_items %}
+            <p><a href='change_password'>Change your password</a></p>
+            <br>
+        {% endif %}
         <h2>Shop:</h2>
         {% if user_details.id == user.id and user_items %}
             {% for item in user_items %}
                 <div class='user-container'>
                     <a href='/items/{{ item.id }}'> {{ item.name }} </a>
                     <hr>
-                    <div class='buttons-container'>
-                        <form method='post' action='/donations'>
-                            {% csrf_token %}
-                            <input type='hidden' name='item_id' value='{{ item.id }}' />
-                            <button class='btn btn-primary' type='submit'>Donate</button>
-                        </form>
-                        <form method='post' action='/items/{{ item.id }}/delete'>
-                            {% csrf_token %}
-                            <input type='hidden' name='item_id' value='{{ item.id }}' />
-                            <button class='btn btn-delete' type='submit'>Delete</button>
-                        </form>
-                    </div>
+                    {% if item.out_for_request %}
+                        This Item or Service is out for request - No actions available
+                    {% else %}
+                        <div class='buttons-container'>
+                            <form method='post' action='/donations'>
+                                {% csrf_token %}
+                                <input type='hidden' name='item_id' value='{{ item.id }}' />
+                                <button class='btn btn-primary' type='submit'>Donate</button>
+                            </form>
+                            <form method='post' action='/items/{{ item.id }}/delete'>
+                                {% csrf_token %}
+                                <input type='hidden' name='item_id' value='{{ item.id }}' />
+                                <button class='btn btn-delete' type='submit'>Delete</button>
+                            </form>
+                        </div>
+                    {% endif %}
                 </div>
             {% endfor %}
             <br>
@@ -68,6 +76,34 @@
         {% else %}
             <br>
             <h3>Sorry, {{ user_details.username }} didn't upload any item or service yet...</h3>
+        {% endif %}
+        <br>
+        {% if user_details.id == user.id %}
+            <h2>Swapp Requests:</h2>
+            <div class='request-container'>
+                <div class='user-container'>
+                    <h4>Sent:</h4>
+                    <br>
+                    {% if sent_swapp_requests %}
+                        {% for request in sent_swapp_requests %}
+                            <p><a href='swapp_requests/{{ request.trace_id }}'>{{ request.trace_id }}</a></p>
+                        {% endfor %}
+                    {% else %}
+                        You didn't send any swapp request yet...
+                    {% endif %}
+                </div>
+                <div class='user-container'>
+                    <h4>Received:</h4>
+                    <br>
+                    {% if received_swapp_requests %}
+                        {% for request in received_swapp_requests %}
+                            <p><a href='swapp_requests/{{ request.trace_id }}'>{{ request.trace_id }}</a></p>
+                        {% endfor %}
+                    {% else %}
+                        You didn't receive any swapp request yet...
+                    {% endif %}
+                </div>
+            </div>
         {% endif %}
     </div>
 {% endblock %}
