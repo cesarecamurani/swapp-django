@@ -23,7 +23,7 @@
             <div class='user-container'>
                 <a href='/items/{{ item.id }}'> {{ item.name }} </a>
                 <hr>
-                <p> Owned by <a href='users/{{ item.owner.username }}'>{{ item.owner.username }}</a>
+                <p> Current Owner: <a href='users/{{ item.owner.username }}'>{{ item.owner.username }}</a>
             </div>
         {% endfor %}
     </div>

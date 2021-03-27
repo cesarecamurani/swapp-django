@@ -54,6 +54,7 @@
                     <p>for <a href='/users/{{ offerer.username }}'>{{ offerer.username }}</a>'s: </p>
                     <p><b>{{ offered_item.name }}</b></p>
                 {% endif %}
+                <p>{{ swapp_request_details.closed_at }}</p>
                 <hr>
                 Request Status: <div style='color: var(--aurora-4)'><b>{{ request_state }}</b>
                 <br>
@@ -69,6 +70,7 @@
                     <p>for <a href='/users/{{ offerer.username }}'>{{ offerer.username }}</a>'s: </p>
                     <p><b>{{ offered_item.name }}</b></p>
                 {% endif %}
+                <p>{{ swapp_request_details.closed_at }}</p>
                 <hr>
                 Request Status: <div style='color: var(--aurora-1)'><b>{{ request_state }}</b>
                 <br>

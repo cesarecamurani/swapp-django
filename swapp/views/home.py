@@ -11,4 +11,6 @@ from django.shortcuts import render, redirect
 @login_required
 @transaction.atomic
 def index(request):
-    return redirect('items')
+    user = request.user
+
+    return redirect(f'/users/{user.username}')

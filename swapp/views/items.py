@@ -96,14 +96,6 @@ def new_swapp_request(request, item_id):
             swapp_request.trace_id = __generate_trace_id()
             swapp_request.save()
 
-            existing_requests_for_item = SwappRequest.objects.all().filter(requested_product=swapp_request.offered_product)
-
-            for req in existing_requests_for_item:
-                req.state = 'RJ'
-                req.save()
-                req.offered_product.out_for_request = False
-                req.offered_product.save()
-
             offered_item = swapp_request.offered_product
             offered_item.out_for_request = True
             offered_item.save()

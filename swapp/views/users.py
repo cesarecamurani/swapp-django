@@ -62,7 +62,6 @@ def user_request(request, username):
             pending_sent_swapp_requests = []
             pending_received_swapp_requests = []
             closed_swapp_requests = []
-            # page_obj = None
 
             messages.error(request, 'Swapper not found!')
 
@@ -71,8 +70,7 @@ def user_request(request, username):
             'user_items': user_items,
             'sent_swapp_requests': pending_sent_swapp_requests,
             'received_swapp_requests': pending_received_swapp_requests,
-            'closed_swapp_requests': closed_swapp_requests,
-            # 'page_obj': page_obj
+            'closed_swapp_requests': closed_swapp_requests
         })
 
 
@@ -153,16 +151,26 @@ def accept_swapp_request(request, username, trace_id):
 
             offered_item.owner = request.user
             offered_item.out_for_request = False
+            offered_item.current_location = ''
+            offered_item.preferred_change = ''
             offered_item.save()
 
             requested_item.owner = offerer
+            requested_item.current_location = ''
+            requested_item.preferred_change = ''
             requested_item.save()
 
-            same_item_requests = SwappRequest.objects.all().filter(
+            same_offered_item_requests = SwappRequest.objects.all().filter(
+                requested_product=swapp_request_details.offered_product
+            ).exclude(pk=swapp_request_details.id)
+
+            same_requested_item_requests = SwappRequest.objects.all().filter(
                 requested_product=swapp_request_details.requested_product
             ).exclude(pk=swapp_request_details.id)
 
-            for req in same_item_requests:
+            all_same_item_requests = same_offered_item_requests | same_requested_item_requests
+
+            for req in all_same_item_requests:
                 req.state = 'RJ'
                 req.save()
                 req.offered_product.out_for_request = False
@@ -174,9 +182,7 @@ def accept_swapp_request(request, username, trace_id):
             )
 
             return HttpResponseRedirect(
-                '/users/{}/swapp_requests/{}'.format(
-                    request.user.username, swapp_request_details.trace_id
-                )
+                f'/users/{request.user.username}/swapp_requests/{swapp_request_details.trace_id}'
             )
 
 

@@ -15,20 +15,29 @@
             <img src='{{ item_details.picture.url }}' alt='{{ item_details.name }}'>
             <br><br>
             <p>Name:</p>
-            <p><b>{{ item_details.name }}</b></p>
+            <p><b>{{ item_details.name|default:'-- Info not available --' }}</b></p>
             <hr>
             <p>Description:</p>
-            <p><b>{{ item_details.description }}</b></p>
+            <p><b>{{ item_details.description|default:'-- Info not available --' }}</b></p>
             <hr>
-            <p>Owner:</p>
-            <p><a href='/users/{{ item_details.owner.username }}'> {{ item_details.owner.username }}</a></p>
+            <p>Current Location:</p>
+            <p><b>{{ item_details.current_location|default:'-- Info not available --' }}</b></p>
             <hr>
-            <p>Added:</p>
-            <p><b>{{ item_details.created_at }}</b></p>
+            <p>Preferred Item or Service to be swapped with:</p>
+            <p><b>{{ item_details.preferred_change|default:'-- Info not available --' }}</b></p>
+            <hr>
+            <p>Current Owner:</p>
+            <p><a href='/users/{{ item_details.owner.username }}'> {{ item_details.owner.username|default:'-- Info not available --' }}</a></p>
+            <hr>
+            <p>First Time Added:</p>
+            <p><b>{{ item_details.created_at|default:'-- Info not available --' }}</b></p>
+            <hr>
             {% if item_details.owner.id != user.id %}
                 <br>
                 <p><a href='new_swapp_request'>Make a Swapp Request</a></p>
             {% endif %}
+            <br>
+            <p><a href='javascript:window.history.back();'>Back to the previous page</a></p>
         </div>
     </div>
 {% endblock %}
