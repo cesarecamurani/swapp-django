@@ -57,7 +57,7 @@ def login_request(request):
 
                 messages.info(request, f'You are now logged in as {username}.')
 
-                return redirect('/')
+                return redirect(f'/users/{user.username}')
             else:
                 messages.error(request, 'Invalid username or password.')
         else:

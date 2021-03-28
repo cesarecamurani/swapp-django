@@ -1,0 +1,60 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    {% if unread_notifications %}
+        - Notifications ({{ unread_notifications_count }})
+    {% else %}
+        - Notifications
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class='body-internal'>
+        <div class='username'>
+             <h2>Notifications</h2>
+        </div>
+        <br>
+        {% if all_notifications %}
+             <div class='buttons-container'>
+                <form method='post' action='/notifications/mark_all_as_read'>
+                    {% csrf_token %}
+                    <button class='btn btn-primary' type='submit'>Mark all notifications as read</button>
+                </form>
+                <form method='post' action='/notifications/delete_all_notifications'>
+                    {% csrf_token %}
+                    <button class='btn btn-delete' type='submit'>Delete all notifications</button>
+                </form>
+            </div>
+            {% for notification in all_notifications %}
+                <div class='user-container'>
+                    <b>Message:</b> <p>{{ notification.verb }}</p>
+                    <hr>
+                    <b>Received at:</b> <p>{{ notification.timestamp }}</p>
+                    <hr>
+                    {% if notification.unread == True %}
+                        <div class='buttons-container'>
+                            <form method='post' action='/notifications/{{ notification.id }}/mark_as_read'>
+                                {% csrf_token %}
+                                <input type='hidden' name='notification_id' value='{{ notification.id }}' />
+                                <button class='btn btn-primary' type='submit'>Mark as read</button>
+                            </form>
+                            <form method='post' action='/notifications/{{ notification.id }}/delete'>
+                                {% csrf_token %}
+                                <input type='hidden' name='notification_id' value='{{ notification.id }}' />
+                                <button class='btn btn-delete' type='submit'>Delete</button>
+                            </form>
+                        </div>
+                    {% else %}
+                        <form method='post' action='/notifications/{{ notification.id }}/delete'>
+                            {% csrf_token %}
+                            <input type='hidden' name='notification_id' value='{{ notification.id }}' />
+                            <button class='btn btn-delete' type='submit'>Delete</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <h3>You don't have any notification yet...</h3>
+        {% endif %}
+    </div>
+{% endblock %}

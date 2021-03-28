@@ -2,17 +2,16 @@
 from __future__ import unicode_literals
 
 from django.contrib import messages
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
-import pdb
-
 from swapp.forms import ChangePasswordForm
 from swapp.models import SwappRequest, Item
+from notifications.signals import notify
 
 
 @login_required
@@ -26,6 +25,16 @@ def users_request(request):
     else:
         all_users = []
 
+    page = request.GET.get('page', 1)
+    paginator = Paginator(all_users, 10)
+
+    try:
+        all_users = paginator.page(page)
+    except PageNotAnInteger:
+        all_users = paginator.page(1)
+    except EmptyPage:
+        all_users = paginator.page(paginator.num_pages)
+
     return render(request, 'users.html', {'all_users': all_users})
 
 
@@ -36,12 +45,12 @@ def user_request(request, username):
         user_details = get_object_or_404(User, username=username)
 
         if user_details:
-            user_items = user_details.item_set.all().filter(donated=False)
+            user_items = user_details.item_set.all().filter(donated=False, removed=False).order_by('-created_at')
             sent_swapp_requests = SwappRequest.objects.all().filter(offered_product_owner_id=user_details.id)
             received_swapp_requests = SwappRequest.objects.all().filter(requested_product_owner_id=user_details.id)
 
-            pending_sent_swapp_requests = sent_swapp_requests.filter(state='IN')
-            pending_received_swapp_requests = received_swapp_requests.filter(state='IN')
+            pending_sent_swapp_requests = sent_swapp_requests.filter(state='IN').order_by('-closed_at')
+            pending_received_swapp_requests = received_swapp_requests.filter(state='IN').order_by('-closed_at')
 
             closed_sent_swapp_requests = sent_swapp_requests.filter(state__in=['AC', 'RJ'])
             closed_received_swapp_requests = received_swapp_requests.filter(state__in=['AC', 'RJ'])
@@ -57,6 +66,27 @@ def user_request(request, username):
                 closed_swapp_requests = paginator.page(1)
             except EmptyPage:
                 closed_swapp_requests = paginator.page(paginator.num_pages)
+
+            page = request.GET.get('page', 1)
+            paginator = Paginator(pending_sent_swapp_requests, 10)
+
+            try:
+                pending_sent_swapp_requests = paginator.page(page)
+            except PageNotAnInteger:
+                pending_sent_swapp_requests = paginator.page(1)
+            except EmptyPage:
+                pending_sent_swapp_requests = paginator.page(paginator.num_pages)
+
+            page = request.GET.get('page', 1)
+            paginator = Paginator(pending_received_swapp_requests, 10)
+
+            try:
+                pending_received_swapp_requests = paginator.page(page)
+            except PageNotAnInteger:
+                pending_received_swapp_requests = paginator.page(1)
+            except EmptyPage:
+                pending_received_swapp_requests = paginator.page(paginator.num_pages)
+
         else:
             user_items = []
             pending_sent_swapp_requests = []
@@ -76,6 +106,22 @@ def user_request(request, username):
 
 @login_required
 @transaction.atomic
+def user_delete_request(request, username):
+    if request.method == 'POST':
+        user = get_object_or_404(User, username=username)
+        user.delete()
+
+        messages.error(request, 'You\'ve successfully deleted your account. Sorry to see you go!')
+
+        logout(request)
+
+        return redirect('login')
+    else:
+        return render(request, 'delete_account.html')
+
+
+@login_required
+@transaction.atomic
 def change_password_request(request, username):
     if request.method == 'POST':
         password_form = ChangePasswordForm(request.POST)
@@ -89,6 +135,8 @@ def change_password_request(request, username):
             if user is not None:
                 user.set_password(new_password)
                 user.save()
+
+                notify.send(user, recipient=user, verb='Password changed successfully.')
 
                 messages.info(request, 'Password changed successfully.')
 
@@ -149,6 +197,13 @@ def accept_swapp_request(request, username, trace_id):
             user_id = swapp_request_details.offered_product_owner_id
             offerer = get_object_or_404(User, pk=user_id)
 
+            notify.send(
+                offerer,
+                recipient=offerer,
+                verb=f'Your request to swapp {offered_item.name} for {requested_item.name} has been accepted. '
+                     f'You can find the details in your History, in the request with ID {swapp_request_details.trace_id}'
+            )
+
             offered_item.owner = request.user
             offered_item.out_for_request = False
             offered_item.current_location = ''
@@ -176,9 +231,16 @@ def accept_swapp_request(request, username, trace_id):
                 req.offered_product.out_for_request = False
                 req.offered_product.save()
 
+                notify.send(
+                    req.offered_product.owner,
+                    recipient=req.offered_product.owner,
+                    verb=f'Your request to swapp {req.offered_product.name} for {req.requested_product.name} has been rejected. '
+                         f'You can find the details in your History, in the request with ID {req.trace_id}'
+                )
+
             messages.info(
                 request,
-                'You accepted Swapp Request with Trace ID {}.'.format(swapp_request_details.trace_id)
+                f'You accepted Swapp Request with Trace ID {swapp_request_details.trace_id}.'
             )
 
             return HttpResponseRedirect(
@@ -197,18 +259,27 @@ def reject_swapp_request(request, username, trace_id):
             swapp_request_details.save()
 
             offered_item = swapp_request_details.offered_product
+            requested_item = swapp_request_details.requested_product
+
             offered_item.out_for_request = False
             offered_item.save()
 
+            user = get_object_or_404(User, pk=swapp_request_details.offered_product_owner_id)
+
+            notify.send(
+                user,
+                recipient=user,
+                verb=f'Your request to swapp {offered_item.name} for {requested_item.name} has been rejected. '
+                     f'You can find the details in your History, in the request with ID {swapp_request_details.trace_id}'
+            )
+
             messages.error(
                 request,
-                'You rejected Swapp Request with Trace ID {}.'.format(swapp_request_details.trace_id)
+                f'You rejected Swapp Request with Trace ID {swapp_request_details.trace_id}.'
             )
 
             return HttpResponseRedirect(
-                '/users/{}/swapp_requests/{}'.format(
-                    request.user.username, swapp_request_details.trace_id
-                )
+                f'/users/{request.user.username}/swapp_requests/{swapp_request_details.trace_id}'
             )
 
 

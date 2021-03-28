@@ -26,5 +26,27 @@
                 <p> Current Owner: <a href='users/{{ item.owner.username }}'>{{ item.owner.username }}</a>
             </div>
         {% endfor %}
+        {% if all_items.has_other_pages %}
+            <br>
+            <ul class='pagination' style='display: block ruby'>
+                {% if all_items.has_previous %}
+                    <li><a href='?page={{ all_items.previous_page_number }}'>&#x2B05;</a></li>
+                {% else %}
+                    <li class='disabled'><span>&#x2B05;</span></li>
+                {% endif %}
+                {% for i in all_items.paginator.page_range %}
+                    {% if all_items.number == i %}
+                        <li class='active'><span><b>{{ i }}</b> <span class='sr-only'>(current)</span></span></li>
+                    {% else %}
+                        <li><a href='?page={{ i }}'>{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if all_items.has_next %}
+                    <li><a href='?page={{ all_items.next_page_number }}'>&#x27A1;</a></li>
+                {% else %}
+                    <li class='disabled'><span>&#x27A1;</span></li>
+                {% endif %}
+            </ul>
+        {% endif %}
     </div>
 {% endblock %}

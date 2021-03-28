@@ -13,6 +13,7 @@ class Item(models.Model):
     created_at = models.DateTimeField()
     donated = models.BooleanField(default=False)
     out_for_request = models.BooleanField(default=False)
+    removed = models.BooleanField(default=False)
     picture = models.FileField(upload_to='pictures', default='')
     preferred_change = models.CharField(max_length=15, default='')
     current_location = models.CharField(max_length=15, default='')

@@ -24,5 +24,27 @@
                 <a href='/users/{{ user.username }}'> {{ user.username }} </a>
             </div>
         {% endfor %}
+        {% if all_users.has_other_pages %}
+            <br>
+            <ul class='pagination' style='display: block ruby'>
+                {% if all_users.has_previous %}
+                    <li><a href='?page={{ all_users.previous_page_number }}'>&#x2B05;</a></li>
+                {% else %}
+                    <li class='disabled'><span>&#x2B05;</span></li>
+                {% endif %}
+                {% for i in all_users.paginator.page_range %}
+                    {% if all_users.number == i %}
+                        <li class='active'><span><b>{{ i }}</b> <span class='sr-only'>(current)</span></span></li>
+                    {% else %}
+                        <li><a href='?page={{ i }}'>{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if all_users.has_next %}
+                    <li><a href='?page={{ all_users.next_page_number }}'>&#x27A1;</a></li>
+                {% else %}
+                    <li class='disabled'><span>&#x27A1;</span></li>
+                {% endif %}
+            </ul>
+        {% endif %}
     </div>
 {% endblock %}

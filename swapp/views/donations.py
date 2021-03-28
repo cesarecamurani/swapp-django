@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import pdb
 from datetime import datetime
-
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
-# from django.contrib import messages
 from django.shortcuts import render
+from notifications.signals import notify
 
-from swapp.models import Donation, Item
+from swapp.models import Donation, Item, SwappRequest
 
 
 @login_required
@@ -24,6 +23,22 @@ def donations_request(request):
         donation.save()
 
         item = Item.objects.filter(id=item_id)[0]
+        item_swapp_requests = SwappRequest.objects.all().filter(requested_product=item)
+
+        for req in item_swapp_requests:
+            req.state = 'RJ'
+            req.save()
+            req.offered_product.out_for_request = False
+            req.offered_product.save()
+
+            notify.send(
+                req.offered_product.owner,
+                recipient=req.offered_product.owner,
+                verb=f'Your request to swapp your {req.offered_product.name} for {req.requested_product.name} has been automatically rejected '
+                     f'because the item you requested has been donated to the site\'s charity by its owner. '
+                     f'You can find the details in your History, in the request with ID {req.trace_id}'
+            )
+
         item.donated = True
         item.save()
 
@@ -32,5 +47,15 @@ def donations_request(request):
         all_donations = Donation.objects.all().order_by('donated_at')
     else:
         all_donations = []
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(all_donations, 10)
+
+    try:
+        all_donations = paginator.page(page)
+    except PageNotAnInteger:
+        all_donations = paginator.page(1)
+    except EmptyPage:
+        all_donations = paginator.page(paginator.num_pages)
 
     return render(request, 'donations.html', {'all_donations':  all_donations})

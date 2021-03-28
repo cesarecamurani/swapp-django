@@ -14,9 +14,9 @@
         {% if all_donations %}
             {% for donation in all_donations %}
                 <div class='user-container'>
-                    <p> <strong>{{ donation.item.name }} </strong></p>
+                    <p> <b>{{ donation.item.name }} </b></p>
                     <hr>
-                    <p> <strong>{{ donation.item.description }} </strong></p>
+                    <p> <b>{{ donation.item.description }} </b></p>
                     <hr>
                     <p> Kindly donated by <a href='users/{{ donation.donor.username }}'>{{ donation.donor.username }}</a> @ {{ donation.item.created_at }}
                 </div>
@@ -24,6 +24,28 @@
         {% else %}
             <br>
             <h2>No donations made yet...</h2>
+        {% endif %}
+        {% if all_donations.has_other_pages %}
+            <br>
+            <ul class='pagination' style='display: block ruby'>
+                {% if all_donations.has_previous %}
+                    <li><a href='?page={{ all_donations.previous_page_number }}'>&#x2B05;</a></li>
+                {% else %}
+                    <li class='disabled'><span>&#x2B05;</span></li>
+                {% endif %}
+                {% for i in all_donations.paginator.page_range %}
+                    {% if all_donations.number == i %}
+                        <li class='active'><span><b>{{ i }}</b> <span class='sr-only'>(current)</span></span></li>
+                    {% else %}
+                        <li><a href='?page={{ i }}'>{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if all_donations.has_next %}
+                    <li><a href='?page={{ all_donations.next_page_number }}'>&#x27A1;</a></li>
+                {% else %}
+                    <li class='disabled'><span>&#x27A1;</span></li>
+                {% endif %}
+            </ul>
         {% endif %}
     </div>
 {% endblock %}

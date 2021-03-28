@@ -2,15 +2,12 @@
 from __future__ import unicode_literals
 
 # import pdb
-
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 
 
 @login_required
 @transaction.atomic
 def index(request):
-    user = request.user
-
-    return redirect(f'/users/{user.username}')
+    return redirect('/items')

@@ -34,8 +34,9 @@
         <br>
         {% if user_details.id == user.id %}
             <p><a href='change_password'>Change your password</a></p>
-            <br>
+            <p><a href='delete' style='color: var(--aurora-1)'>Delete your account permanently</a></p>
         {% endif %}
+        <br>
         <h2>Items or Services:</h2>
         {% if user_details.id == user.id and user_items %}
             {% for item in user_items %}
@@ -91,6 +92,28 @@
                     {% else %}
                         You don't have any pending swapp request...
                     {% endif %}
+                    {% if sent_swapp_requests.has_other_pages %}
+                        <hr>
+                        <ul class='pagination' style='display: block ruby'>
+                            {% if sent_swapp_requests.has_previous %}
+                                <li><a href='?page={{ sent_swapp_requests.previous_page_number }}'>&#x2B05;</a></li>
+                            {% else %}
+                                <li class='disabled'><span>&#x2B05;</span></li>
+                            {% endif %}
+                            {% for i in sent_swapp_requests.paginator.page_range %}
+                                {% if sent_swapp_requests.number == i %}
+                                    <li class='active'><span><b>{{ i }}</b> <span class='sr-only'>(current)</span></span></li>
+                                {% else %}
+                                    <li><a href='?page={{ i }}'>{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if sent_swapp_requests.has_next %}
+                                <li><a href='?page={{ sent_swapp_requests.next_page_number }}'>&#x27A1;</a></li>
+                            {% else %}
+                                <li class='disabled'><span>&#x27A1;</span></li>
+                            {% endif %}
+                        </ul>
+                    {% endif %}
                 </div>
                 <div class='user-container'>
                     <h4>Received:</h4>
@@ -101,6 +124,28 @@
                         {% endfor %}
                     {% else %}
                         You don't have any pending swapp request...
+                    {% endif %}
+                    {% if received_swapp_requests.has_other_pages %}
+                        <hr>
+                        <ul class='pagination' style='display: block ruby'>
+                            {% if received_swapp_requests.has_previous %}
+                                <li><a href='?page={{ received_swapp_requests.previous_page_number }}'>&#x2B05;</a></li>
+                            {% else %}
+                                <li class='disabled'><span>&#x2B05;</span></li>
+                            {% endif %}
+                            {% for i in received_swapp_requests.paginator.page_range %}
+                                {% if received_swapp_requests.number == i %}
+                                    <li class='active'><span><b>{{ i }}</b> <span class='sr-only'>(current)</span></span></li>
+                                {% else %}
+                                    <li><a href='?page={{ i }}'>{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if received_swapp_requests.has_next %}
+                                <li><a href='?page={{ received_swapp_requests.next_page_number }}'>&#x27A1;</a></li>
+                            {% else %}
+                                <li class='disabled'><span>&#x27A1;</span></li>
+                            {% endif %}
+                        </ul>
                     {% endif %}
                 </div>
             </div>
