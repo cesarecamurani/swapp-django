@@ -84,7 +84,7 @@ def update_item_request(request, item_id):
 def item_delete_request(request, item_id):
     if request.method == 'POST':
         item = get_object_or_404(Item, pk=item_id)
-        item_swapp_requests = SwappRequest.objects.all().filter(requested_product=item)
+        item_swapp_requests = SwappRequest.objects.all().filter(requested_product=item, state='IN')
 
         for req in item_swapp_requests:
             req.state = 'RJ'
@@ -138,7 +138,7 @@ def item_create_request(request):
 @transaction.atomic
 def new_swapp_request(request, item_id):
     user = request.user
-    items = user.item_set.all().filter(donated=False, out_for_request=False)
+    items = user.item_set.all().filter(donated=False, out_for_request=False, removed=False)
 
     if request.method == 'POST':
         swapp_request_form = SwappRequestCreateForm(request.POST, user=user)

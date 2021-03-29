@@ -329,12 +329,12 @@ def accept_swapp_request(request, username, trace_id):
             requested_item.save()
 
             same_offered_item_requests = SwappRequest.objects.all().filter(
-                requested_product=swapp_request_details.offered_product
-            ).exclude(pk=swapp_request_details.id, state__in=['AC', 'RJ'])
+                requested_product=swapp_request_details.offered_product, state='IN'
+            ).exclude(pk=swapp_request_details.id)
 
             same_requested_item_requests = SwappRequest.objects.all().filter(
-                requested_product=swapp_request_details.requested_product
-            ).exclude(pk=swapp_request_details.id, state__in=['AC', 'RJ'])
+                requested_product=swapp_request_details.requested_product, state='IN'
+            ).exclude(pk=swapp_request_details.id)
 
             all_same_item_requests = same_offered_item_requests | same_requested_item_requests
 

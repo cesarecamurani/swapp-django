@@ -27,11 +27,11 @@
                 <hr>
                 {% if offerer.id == user.id %}
                     Request Status: <div style='color: var(--aurora-5)'><b>{{ request_state }}</b>
-                    <br>
+                    <br><br>
                     <form method='post' action='{{ swapp_request_details.trace_id }}/delete_swapp_request'>
                         {% csrf_token %}
                         <input type='hidden' name='swapp_request_id' value='{{ swapp_request_details.id }}' />
-                        <button class='btn btn-delete' type='submit'>Delete</button>
+                        <button class='btn btn-delete' type='submit'>Delete Request</button>
                     </form>
                 {% else %}
                     <div class='buttons-container'>
