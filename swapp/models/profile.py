@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django_countries.fields import CountryField
 import uuid
 
 
@@ -12,7 +13,7 @@ class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     phone_number = models.CharField(max_length=30, default='')
     city = models.CharField(max_length=15, default='')
-    country = models.CharField(max_length=15, default='')
+    country = CountryField()
     address = models.CharField(max_length=30, default='')
 
 

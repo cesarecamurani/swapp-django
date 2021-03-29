@@ -3,9 +3,11 @@ from __future__ import unicode_literals
 
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
-from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 from notifications.signals import notify
 
 from swapp.models import Donation, Item, SwappRequest
@@ -39,12 +41,14 @@ def donations_request(request):
                      f'You can find the details in your History, in the request with ID {req.trace_id}'
             )
 
+        item.owner = get_object_or_404(User, username='cesarecamurani')
         item.donated = True
         item.save()
 
-        all_donations = Donation.objects.all().order_by('donated_at')
+        return HttpResponseRedirect('/donations')
+
     elif request.method == 'GET':
-        all_donations = Donation.objects.all().order_by('donated_at')
+        all_donations = Donation.objects.all().order_by('-donated_at')
     else:
         all_donations = []
 

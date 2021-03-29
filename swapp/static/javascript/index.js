@@ -12,6 +12,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    let flag = document.querySelector('#flag_id_country')
+
+    if (flag) {
+        flag.hidden = true
+    }
+
     displayClock()
 })
 

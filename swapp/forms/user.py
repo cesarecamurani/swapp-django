@@ -74,3 +74,17 @@ class ChangePasswordForm(Form):
             self.add_error('new_password_confirmation', 'Password does not match')
 
         return cleaned_data
+
+
+class UserUpdateForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ['email']
+
+    def __init__(self, *args, **kwargs):
+        super(UserUpdateForm, self).__init__(*args, **kwargs)
+
+        for field_name, field in self.fields.items():
+            self.fields[field_name].widget.attrs = {
+                'class': 'form-control', 'placeholder': field.label, 'autocomplete': 'off'
+            }

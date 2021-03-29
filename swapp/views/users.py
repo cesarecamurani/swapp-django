@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import pdb
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth.models import User
@@ -9,8 +11,8 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
-from swapp.forms import ChangePasswordForm
-from swapp.models import SwappRequest, Item
+from swapp.forms import ChangePasswordForm, ProfileCreateForm, UserUpdateForm
+from swapp.models import SwappRequest, Donation
 from notifications.signals import notify
 
 
@@ -18,7 +20,7 @@ from notifications.signals import notify
 @transaction.atomic
 def users_request(request):
     if request.method == 'GET':
-        all_users = User.objects.all().order_by('username')
+        all_users = User.objects.all().exclude(username='cesarecamurani').order_by('username')
     elif request.method == 'POST':
         query = request.POST['search']
         all_users = User.objects.filter(username__istartswith=query)
@@ -106,12 +108,123 @@ def user_request(request, username):
 
 @login_required
 @transaction.atomic
-def user_delete_request(request, username):
+def update_profile_request(request, username):
+    if request.method == 'POST':
+        update_user_form = UserUpdateForm(request.POST)
+        update_profile_form = ProfileCreateForm(request.POST)
+
+        if update_user_form.is_valid() and update_profile_form.is_valid():
+            update_user_form = UserUpdateForm(request.POST, instance=request.user)
+            update_user_form.full_clean()
+            update_user_form.save()
+
+            update_profile_form = ProfileCreateForm(request.POST, instance=request.user.profile)
+            update_profile_form.full_clean()
+            update_profile_form.save()
+
+            notify.send(request.user, recipient=request.user, verb='Profile updated successfully.')
+
+            messages.success(request, 'Profile updated successfully.')
+
+            return redirect(f'/users/{request.user.username}')
+
+        messages.error(request, 'Unsuccessful update. Invalid information.')
+    else:
+        update_user_form = UserUpdateForm(instance=request.user)
+        update_profile_form = ProfileCreateForm(instance=request.user.profile)
+
+    return render(request, 'update_profile.html', {
+        'update_user_form': update_user_form,
+        'update_profile_form': update_profile_form
+    })
+
+
+@login_required
+@transaction.atomic
+def delete_user_request(request, username):
     if request.method == 'POST':
         user = get_object_or_404(User, username=username)
-        user.delete()
+        sent_swapp_requests = SwappRequest.objects.all().filter(offered_product_owner_id=user.id)
+        received_swapp_requests = SwappRequest.objects.all().filter(requested_product_owner_id=user.id)
+
+        initial_sent_swapp_requests = sent_swapp_requests.filter(state='IN')
+        closed_sent_swapp_requests = sent_swapp_requests.filter(state__in=['AC', 'RJ'])
+
+        initial_received_swapp_requests = received_swapp_requests.filter(state='IN')
+        closed_received_swapp_requests = received_swapp_requests.filter(state__in=['AC', 'RJ'])
+
+        for req in initial_sent_swapp_requests:
+            offered_item = req.offered_product
+            requested_item = req.requested_product
+            recipient = requested_item.owner
+
+            notify.send(
+                recipient,
+                recipient=recipient,
+                verb=f'The request to swapp {offered_item.name} for {requested_item.name} has been canceled because the owner '
+                     f'deleted their account. '
+                     f'The request with ID {req.trace_id} is no longer visible to you and won\'t be displayed '
+                     f'in your History.'
+            )
+            req.delete()
+
+        for req in initial_received_swapp_requests:
+            offered_item = req.offered_product
+            requested_item = req.requested_product
+            recipient = offered_item.owner
+
+            offered_item.out_for_request = False
+            offered_item.save()
+
+            notify.send(
+                recipient,
+                recipient=recipient,
+                verb=f'The request to swapp {offered_item.name} for {requested_item.name} has been canceled because the owner '
+                     f'deleted their account. '
+                     f'The request with ID {req.trace_id} is no longer visible to you and won\'t be displayed '
+                     f'in your History.'
+            )
+            req.delete()
+
+        for req in closed_sent_swapp_requests:
+            if req.state == 'AC':
+                recipient = req.offerred_product.owner
+            else:
+                recipient = req.requested_product.owner
+
+            notify.send(
+                recipient,
+                recipient=recipient,
+                verb=f'The request with ID {req.trace_id} is no longer visible to you and won\'t be displayed '
+                     f'in your History because the other party deleted their account.'
+
+            )
+            req.delete()
+
+        for req in closed_received_swapp_requests:
+            if req.state == 'AC':
+                recipient = req.requested_product.owner
+            else:
+                recipient = req.offered_product.owner
+
+            notify.send(
+                recipient,
+                recipient=recipient,
+                verb=f'The request with ID {req.trace_id} is no longer visible to you and won\'t be displayed '
+                     f'in your History because the other party deleted their account.'
+
+            )
+            req.delete()
+
+        user_donations = Donation.objects.all().filter(donor=user)
+
+        for donation in user_donations:
+            donation.donor = get_object_or_404(User, username='cesarecamurani')
+            donation.save()
 
         messages.error(request, 'You\'ve successfully deleted your account. Sorry to see you go!')
+
+        user.delete()
 
         logout(request)
 
@@ -217,11 +330,11 @@ def accept_swapp_request(request, username, trace_id):
 
             same_offered_item_requests = SwappRequest.objects.all().filter(
                 requested_product=swapp_request_details.offered_product
-            ).exclude(pk=swapp_request_details.id)
+            ).exclude(pk=swapp_request_details.id, state__in=['AC', 'RJ'])
 
             same_requested_item_requests = SwappRequest.objects.all().filter(
                 requested_product=swapp_request_details.requested_product
-            ).exclude(pk=swapp_request_details.id)
+            ).exclude(pk=swapp_request_details.id, state__in=['AC', 'RJ'])
 
             all_same_item_requests = same_offered_item_requests | same_requested_item_requests
 
@@ -281,6 +394,33 @@ def reject_swapp_request(request, username, trace_id):
             return HttpResponseRedirect(
                 f'/users/{request.user.username}/swapp_requests/{swapp_request_details.trace_id}'
             )
+
+
+@login_required
+@transaction.atomic
+def delete_swapp_request(request, username, trace_id):
+    if request.method == 'POST':
+        swapp_request_obj = get_object_or_404(SwappRequest, trace_id=trace_id)
+        swapp_request_obj.delete()
+
+        messages.error(request, f'You\'ve successfully deleted the request with trace ID {swapp_request_obj.trace_id}')
+
+        offered_item = swapp_request_obj.offered_product
+        requested_item = swapp_request_obj.requested_product
+        recipient = requested_item.owner
+
+        offered_item.out_for_request = False
+        offered_item.save()
+
+        notify.send(
+            recipient,
+            recipient=recipient,
+            verb=f'The request to swapp {offered_item.name} for {requested_item.name} has been canceled by its owner. '
+                 f'The request with ID {swapp_request_obj.trace_id} is no longer visible to you and won\'t be displayed '
+                 f'in your History.'
+        )
+
+        return HttpResponseRedirect(f'/users/{request.user.username}')
 
 
 def __swapp_request_state(db_state):

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import pdb
 import random
 import string
 from datetime import datetime
@@ -48,6 +49,34 @@ def item_request(request, item_id):
         item_details = get_object_or_404(Item, pk=item_id)
 
         return render(request, 'item.html', {'item_details': item_details})
+    
+    
+@login_required
+@transaction.atomic
+def update_item_request(request, item_id):
+    item = get_object_or_404(Item, pk=item_id)
+
+    if request.method == 'POST':
+        update_item_form = ItemCreateForm(request.POST, request.FILES)
+
+        if update_item_form.is_valid():
+            update_item_form = ItemCreateForm(request.POST, instance=item)
+            update_item_form.full_clean()
+            update_item_form.save()
+
+            notify.send(request.user, recipient=request.user, verb=f'Item {item.name} updated successfully.')
+
+            messages.success(request, f'Item {item.name} updated successfully.')
+
+            return redirect(f'/users/{request.user.username}')
+
+        messages.error(request, 'Unsuccessful update. Invalid information.')
+    else:
+        update_item_form = ItemCreateForm(instance=item)
+
+    return render(request, 'update_item.html', {
+        'update_item_form': update_item_form
+    })
 
 
 @login_required

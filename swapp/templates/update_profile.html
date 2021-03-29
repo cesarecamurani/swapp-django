@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+   - Update Your Profile
+{% endblock %}
+
+{% block body %}
+    <div class='forms-container'>
+        <h2>Update Your Profile</h2>
+        <hr>
+        <form method='post'>
+            {% csrf_token %}
+            {% for field in update_user_form %}
+                <div class='form-group'> {{ field }} </div>
+            {% endfor %}
+            {% for field in update_profile_form %}
+                <div class='form-group'> {{ field }} </div>
+            {% endfor %}
+            <br>
+            <button class='btn btn-primary' type='submit'>Update</button>
+        </form>
+        <hr>
+        <p><a href='javascript:window.history.back();'>Back to the profile page</a></p>
+    </div>
+{% endblock %}

@@ -21,7 +21,7 @@
         <br>
         {% for user in all_users %}
             <div class='user-container'>
-                <a href='/users/{{ user.username }}'> {{ user.username }} </a>
+                <h4><a href='/users/{{ user.username }}'> {{ user.username }} </a></h4>
             </div>
         {% endfor %}
         {% if all_users.has_other_pages %}

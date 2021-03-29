@@ -19,7 +19,7 @@
         </div>
         <br>
         <br>
-        <h2>Details:</h2>
+        <h2 class='subtitle'>Details:</h2>
         <div class='user-container'>
             <p><b>Email:</b> <a href='mailto:{{ user_details.email }}'>{{ user_details.email }}</a></p>
             <hr>
@@ -27,21 +27,23 @@
             <hr>
             <p><b>City:</b> {{ user_details.profile.city }}</p>
             <hr>
-            <p><b>Country:</b> {{ user_details.profile.country }}</p>
+            <p><b>Country:</b> {{ user_details.profile.country.name }}</p>
             <hr>
             <p><b>Address:</b> {{ user_details.profile.address }}</p>
         </div>
         <br>
         {% if user_details.id == user.id %}
+            <p><a href='update_profile'>Update your profile</a></p>
             <p><a href='change_password'>Change your password</a></p>
             <p><a href='delete' style='color: var(--aurora-1)'>Delete your account permanently</a></p>
         {% endif %}
         <br>
-        <h2>Items or Services:</h2>
+        <h2 class='subtitle'>Items or Services:</h2>
         {% if user_details.id == user.id and user_items %}
             {% for item in user_items %}
                 <div class='user-container'>
-                    <a href='/items/{{ item.id }}'> {{ item.name }} </a>
+                    <h4><a href='/items/{{ item.id }}'> {{ item.name }} </a></h4>
+                    <p><a href='/items/{{ item.id }}/update_item'>Update this item</a></p>
                     <hr>
                     {% if item.out_for_request %}
                         This Item or Service is out for request - No actions available
@@ -71,7 +73,7 @@
             {% endfor %}
         {% elif user_details.id == user.id %}
             <br>
-            <h3>You didn't upload any item or service yet...</h3>
+            <h4 class='user-container'>You didn't upload any item or service yet...</h4>
             <br>
             <p><a href='/items/add_item'>Add Item or Service</a></p>
         {% else %}
@@ -80,7 +82,7 @@
         {% endif %}
         <br>
         {% if user_details.id == user.id %}
-            <h2>Swapp Requests:</h2>
+            <h2 class='subtitle'>Swapp Requests:</h2>
             <div class='request-container'>
                 <div class='user-container'>
                     <h4>Sent:</h4>

@@ -28,7 +28,7 @@ def register_request(request):
             profile_form.full_clean()
             profile_form.save()
 
-            return redirect('/')
+            return redirect(f'/users/{user.username}')
 
         messages.error(request, 'Unsuccessful registration. Invalid information.')
     else:
@@ -71,5 +71,7 @@ def login_request(request):
 @transaction.atomic
 def logout_request(request):
     logout(request)
+
     messages.info(request, 'You\'ve been successfully logged out.')
+
     return redirect('login')

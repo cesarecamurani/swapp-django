@@ -1,5 +1,7 @@
 {% extends 'layout.html' %}
 
+{% load static %}
+
 {% block title %}
    - Donations
 {% endblock %}
@@ -16,9 +18,15 @@
                 <div class='user-container'>
                     <p> <b>{{ donation.item.name }} </b></p>
                     <hr>
+                    <p><img src='{{donation.item.picture.url }}' alt='{{ donation.item.name }}'></p>
+                    <hr>
                     <p> <b>{{ donation.item.description }} </b></p>
                     <hr>
-                    <p> Kindly donated by <a href='users/{{ donation.donor.username }}'>{{ donation.donor.username }}</a> @ {{ donation.item.created_at }}
+                    {% if donation.donor.username == 'cesarecamurani' %}
+                        <p> Kindly donated by <b>Anonymous</b> @ {{ donation.item.created_at }}
+                    {% else %}
+                        <p> Kindly donated by <b>{{ donation.donor.username }}</b> @ {{ donation.item.created_at }}
+                    {% endif %}
                 </div>
             {% endfor %}
         {% else %}
