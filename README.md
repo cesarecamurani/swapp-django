@@ -1,6 +1,6 @@
 # SWApp
 
-#### Video Demo:  <URL HERE>
+#### Video Demo:  https://youtu.be/sUuk3O5h06E
 #### Description:
   SWApp is a platform where people can barter - swap(p)! - objects they don't use anymore or "services", such as piano or yoga lessons, small repairs and so on.
   Money is banned and everyone is free to give an item or service the value they see fit! (if someone is willing to give away their Ferrari for your wedding tape     good for you! 😉)
